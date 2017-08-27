@@ -5,6 +5,8 @@ static TextLayer *s_time_layer;
 static TextLayer *s_time_left_layer;
 static TextLayer *s_until_layer;
 static TextLayer *s_class_layer;
+// Name of next class, declared as an array 'cause why not
+char nextclass[10] = "Subject";
 
 static void update_time()  {
   // Get a tm structure
@@ -16,8 +18,12 @@ static void update_time()  {
   strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
            "%H:%M" : "%I:%M", tick_time);
   
+  
+  // Time checking(check if time is equal to class start time, not if it's in between(much easier) then get the remaining time based on that)
+  
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
+  text_layer_set_text(s_class_layer, nextclass);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -61,7 +67,6 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_until_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_until_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_until_layer), GRect(0, 100, bounds.size.w, bounds.size.h));
-  //text_layer_set_size(s_until_layer, GSize(bounds.size.w, 20));
   text_layer_set_text(s_until_layer, "Until");
   
   // Layout for middle layer 2
@@ -70,8 +75,6 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_class_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   text_layer_set_text_alignment(s_class_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_class_layer), GRect(0, 125, bounds.size.w, bounds.size.h));
-  //text_layer_set_size(s_class_layer, GSize(bounds.size.w, 20));
-  text_layer_set_text(s_class_layer, "Subject");
   
   // Layout for top time
   text_layer_set_background_color(s_time_layer, GColorClear);
