@@ -1,12 +1,32 @@
 {
     "author": "finnmorin@gmail.com",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.4"
+    },
     "keywords": [],
     "name": "timetable",
     "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
         "displayName": "Timetable",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "blk1name",
+            "blk2name",
+            "blk3name",
+            "blk4name",
+            "blk5name",
+            "blk6name",
+            "blk7name",
+            "blk8name",
+            "afterschooldays[5]",
+            "afterschoolmonname",
+            "afterschooltuename",
+            "afterschoolwedname",
+            "afterschoolthuname",
+            "afterschoolfriname"
+        ],
         "projectType": "native",
         "resources": {
             "media": []
