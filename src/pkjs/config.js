@@ -109,6 +109,11 @@ module.exports = [
         "label": "Friday",
       }
     ]
+  },
+    {
+  "type": "submit",
+  "defaultValue": "Save"
+}
     
-  }
+  
   ];

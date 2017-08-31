@@ -12,9 +12,112 @@ char currentTime24h[1];
 static char a[8];
 double timeleft;
 // Name of next class, declared as an array 'cause why not
-char nextclass[10] = "Subject";
+char nextclass[10];
 
 static ClaySettings settings;
+
+static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsize)  { //Stringsize has to be passed here because sizeof(blknum) returns either 0 or 4(idk) since it's a pointer
+  timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
+  const time_t temp2 = timeleft; 
+  struct tm* test = localtime(&temp2); //Yes the time manager is called test.
+  strftime(a, sizeof(a), "%R", test);
+  strncpy(nextclass, blknum, stringsize);
+}
+
+static void next_class(char* nextclass_return, char* currentTime24h, tm tick_time)  {
+
+  // Sync day, month, year, etc
+  nextclasstime = tick_time; 
+    
+  // Initialise the time manager for time left
+
+  
+  // Make sure you're not some loser who uses this watchface on a weekend(and if you are set next block to 1)
+  if(strncmp(currentDayName, "Sat", 2) == 0 || (strncmp(currentDayName, "Sun", 2) == 0 && (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)))) {
+    strncpy(nextclass_return, settings.blk1name, sizeof(settings.blk1name));        // Saturdays are a bitch because %R won't display more than 24h so please don't use the watchface on a saturday
+    strncpy(a, "", 1);
+    text_layer_set_text(s_until_layer, "Monday");
+    text_layer_set_text(s_time_left_layer, "");
+  }
+     
+     
+   if(strncmp(currentDayName, "Sun", 2) == 0){
+    nextclasstime.tm_wday = 1;
+    nextclasstime.tm_hour = 8;
+    nextclasstime.tm_min = 25;
+    set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
+  }
+  
+  //Monday
+  if(strncmp(currentDayName, "Thu", 2) == 0){
+    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Monday blk1     TIME CODE HERE WORKS?
+        nextclasstime.tm_hour = 8;
+        nextclasstime.tm_min = 25;
+        set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
+      }
+           
+    
+    else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 1, next block is advisory
+        nextclasstime.tm_hour = 9;
+        nextclasstime.tm_min = 21;
+        set_info(nextclasstime, tick_time, "Focus", 5);
+        }          
+    
+    else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Advisory, next block is 2
+              nextclasstime.tm_hour = 10;
+              nextclasstime.tm_min = 6;
+              set_info(nextclasstime, tick_time, settings.blk2name, sizeof(settings.blk2name));
+          }
+
+    else if (tick_time.tm_hour < 11 || (tick_time.tm_hour == 11 && tick_time.tm_min < 7)){ //In block 2, next block is 3
+              nextclasstime.tm_hour = 11;
+              nextclasstime.tm_min = 7;
+              set_info(nextclasstime, tick_time, settings.blk3name, sizeof(settings.blk3name));
+          }
+
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
+              nextclasstime.tm_hour = 12;
+              nextclasstime.tm_min = 8;
+              set_info(nextclasstime, tick_time, "Lunch", 5);
+          }
+
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 4
+              nextclasstime.tm_hour = 12;
+              nextclasstime.tm_min = 56;
+              set_info(nextclasstime, tick_time, settings.blk4name, sizeof(settings.blk4name));
+          }
+
+    else if (tick_time.tm_hour < 1 || (tick_time.tm_hour == 1 && tick_time.tm_min < 57)){ //In block 4, next block is 5
+              nextclasstime.tm_hour = 1;
+              nextclasstime.tm_min = 57;
+              set_info(nextclasstime, tick_time, settings.blk5name, sizeof(settings.blk5name));
+          }
+    
+    else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
+              nextclasstime.tm_hour = 2;
+              nextclasstime.tm_min = 59;
+              if(settings.afterschooldays[0]){
+                set_info(nextclasstime, tick_time, settings.afterschoolmon, sizeof(settings.afterschoolmon));
+              }
+                else
+                  set_info(nextclasstime, tick_time, "Freedom", 7);
+    }
+    
+    else if (settings.afterschooldays[0] && ((tick_time.tm_hour < settings.afterschoolendtimes[0][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[0][0] && tick_time.tm_min < settings.afterschoolendtimes[0][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+              nextclasstime.tm_hour = settings.afterschoolendtimes[0][0];
+              nextclasstime.tm_min = settings.afterschoolendtimes[0][1];
+              set_info(nextclasstime, tick_time, "Freedom", 7);
+          }
+    else {
+      nextclasstime.tm_wday = 2;
+      nextclasstime.tm_hour = 8;
+      nextclasstime.tm_min = 25;
+      set_info(nextclasstime, tick_time, settings.blk7name, sizeof(settings.blk7name));
+    }
+      
+    }
+}
+
 
 static void update_time()  {
   // Get a tm structure
@@ -44,34 +147,41 @@ static void update_time()  {
 static void prv_save_settings() {
   persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
   update_time();
+  printf("settings saved");
 }
 
-static void prv_default_settings() {
-  strncpy(settings.blk1name, "Math", 5);
-  strncpy(settings.blk2name, "Band", 5);
-  strncpy(settings.blk3name, "English", 8);
-  strncpy(settings.blk4name, "French", 7);
-  strncpy(settings.blk5name, "IT", 3);
-  strncpy(settings.blk6name, "Physics", 8);
-  strncpy(settings.blk7name, "Chem", 5);
-  strncpy(settings.blk8name, "Spare", 6);
+static void prv_default_settings() { //Try and keep block names 7 characters max or they don't fit on a pebble time
+  strncpy(settings.blk1name, "Math", 4);
+  strncpy(settings.blk2name, "Band", 4);
+  strncpy(settings.blk3name, "English", 7);
+  strncpy(settings.blk4name, "French", 6);
+  strncpy(settings.blk5name, "IT", 2);
+  strncpy(settings.blk6name, "Physics", 7);
+  strncpy(settings.blk7name, "Chem", 4);
+  strncpy(settings.blk8name, "Spare", 5);
   settings.afterschooldays[0] = true;
   int i;
-  for(i = 1; i < 4; i++)
+  for(i = 1; i < 4; i++){
     settings.afterschooldays[i] = false;
-    printf("%i", settings.afterschooldays[i]);
+    printf("%i", settings.afterschooldays[i]);}
+  settings.afterschoolendtimes[0][0] = 16;
+  settings.afterschoolendtimes[0][1] = 30;
   strncpy(settings.afterschoolmon, "RnB", 4);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
+  printf("defaults loaded");
 }
 
 static void prv_load_settings() {
   // Load the default settings
   prv_default_settings();
+  printf("Default: %s", settings.blk1name);
+  
   // Read settings from persistent storage, if they exist
-  persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+  //persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+  printf("settings loaded");
 }
 
 
@@ -79,6 +189,11 @@ static void prv_load_settings() {
 // AppMessage receive handler
 static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
   //Read block names
+/*  Tuple *test_t = dict_find(iter, MESSAGE_KEY_testbool);
+  if(test_t){
+    settings.testbool = test_t->value->uint8;
+    printf("%i", settings.testbool);
+  } */
   Tuple *blk1_t = dict_find(iter, MESSAGE_KEY_blk1name);
   if(blk1_t) {
     strncpy(settings.blk1name, blk1_t->value->cstring, sizeof(blk1_t->value->cstring));}
@@ -107,130 +222,6 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   prv_save_settings();
 }
   
-
-
-
-
-static void next_class(char* nextclass_return, char* currentTime24h, tm tick_time)  {
-
-  // Sync day, month, year, etc
-  nextclasstime = tick_time; 
-    
-  // Initialise the time manager for time left
-
-  
-  // Make sure you're not some loser who uses this watchface on a weekend(and if you are set next block to 1)
-  if(strncmp(currentDayName, "Sat", 2) == 0 || strncmp(currentDayName, "Sun", 2) == 0){
-    nextclasstime.tm_wday = 1;
-    nextclasstime.tm_hour = 8;
-    nextclasstime.tm_min = 25;
-    timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-    const time_t temp2 = timeleft; 
-    struct tm* test = localtime(&temp2); //Yes the time manager is called test.
-    strftime(a, sizeof(a), "%R", test);
-    strncpy(nextclass_return, settings.blk1name, sizeof(settings.blk1name));
-  }
-   //Monday
-  if(strncmp(currentDayName, "Mon", 2) == 0){
-    
-    if (tick_time.tm_hour < 8 && tick_time.tm_min < 25){    //Before Monday blk1
-      nextclasstime.tm_hour = 8;
-      nextclasstime.tm_min = 25;
-            // Get the difference in between now and the next class
-      timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-      const time_t temp2 = timeleft; 
-      struct tm* test = localtime(&temp2);
-      strftime(a, sizeof(a), "%R", test);
-      strncpy(nextclass_return, blk1, sizeof(blk1));
-    }       
-    
-    else if (tick_time.tm_hour < 9 && tick_time.tm_min < 21 && tick_time.tm_hour > 8 && tick_time.tm_min > 25){ //In block 1, next block is advisory
-        nextclasstime.tm_hour = 9;
-        nextclasstime.tm_min = 21;
-        timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-        const time_t temp2 = timeleft; 
-        struct tm* test = localtime(&temp2);
-        strftime(a, sizeof(a), "%R", test);
-        strncpy(nextclass_return, "Advisory", 9);
-        }          
-    
-    else if (tick_time.tm_hour < 10 && tick_time.tm_min < 6 && tick_time.tm_hour > 9 && tick_time.tm_min > 21){ //In Advisory, next block is 2
-              nextclasstime.tm_hour = 10;
-              nextclasstime.tm_min = 6;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, blk2, sizeof(blk2));
-          }
-
-    else if (tick_time.tm_hour < 11 && tick_time.tm_min < 7 && tick_time.tm_hour > 10 && tick_time.tm_min > 6){ //In block 2, next block is 3
-              nextclasstime.tm_hour = 11;
-              nextclasstime.tm_min = 7;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, blk3, sizeof(blk3));
-          }
-
-    else if (tick_time.tm_hour < 12 && tick_time.tm_min < 8 && tick_time.tm_hour > 11 && tick_time.tm_min > 7){ //In block 3, next block is Lunch
-              nextclasstime.tm_hour = 12;
-              nextclasstime.tm_min = 8;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, "Lunch", 6);
-          }
-
-    else if (tick_time.tm_hour < 12 && tick_time.tm_min < 56 && tick_time.tm_hour > 12 && tick_time.tm_min > 8){ //In Lunch, next block is 4
-              nextclasstime.tm_hour = 12;
-              nextclasstime.tm_min = 56;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, blk4, sizeof(blk4));
-          }
-
-    else if (tick_time.tm_hour < 1 && tick_time.tm_min < 57 && tick_time.tm_hour > 12 && tick_time.tm_min > 56){ //In block 4, next block is 5
-              nextclasstime.tm_hour = 1;
-              nextclasstime.tm_min = 57;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, blk5, sizeof(blk5));
-          }
-    
-    else if (tick_time.tm_hour < 2 && tick_time.tm_min < 59 && tick_time.tm_hour > 1 && tick_time.tm_min > 57){ //In block 5, next block is either freedom or afterschoolmon
-              nextclasstime.tm_hour = 2;
-              nextclasstime.tm_min = 59;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              if(settings.afterschooldays[0] == true){
-                strncpy(nextclass_return, afterschoolmon, sizeof(afterschoolmon));
-              }
-                else
-                  strncpy(nextclass_return, "Freedom", 7);
-    }
-    
-    else if (tick_time.tm_hour < 1 && tick_time.tm_min < 57 && tick_time.tm_hour > 12 && tick_time.tm_min > 56){ //In block 4, next block is 5
-              nextclasstime.tm_hour = 1;
-              nextclasstime.tm_min = 57;
-              timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
-              const time_t temp2 = timeleft; 
-              struct tm* test = localtime(&temp2);
-              strftime(a, sizeof(a), "%R", test);
-              strncpy(nextclass_return, "Freedom", 7);
-          }
-      
-    }
-  }
-
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 update_time();
@@ -309,7 +300,7 @@ static void init()  {
   prv_load_settings();
   // Open AppMessage connection
   app_message_register_inbox_received(prv_inbox_received_handler);
-  app_message_open(128, 128);
+  app_message_open(256, 256);
   
   // Create main Window element and assign to pointer
   s_main_window = window_create();

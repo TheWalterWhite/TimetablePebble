@@ -25,7 +25,8 @@
             "afterschooltuename",
             "afterschoolwedname",
             "afterschoolthuname",
-            "afterschoolfriname"
+            "afterschoolfriname",
+            "afterschoolendtimes[5]"
         ],
         "projectType": "native",
         "resources": {
