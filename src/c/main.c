@@ -49,7 +49,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
   }
   
   //Monday
-  if(strncmp(currentDayName, "Thu", 2) == 0){
+  if(strncmp(currentDayName, "Mon", 2) == 0){
     if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Monday blk1     TIME CODE HERE WORKS?
         nextclasstime.tm_hour = 8;
         nextclasstime.tm_min = 25;
