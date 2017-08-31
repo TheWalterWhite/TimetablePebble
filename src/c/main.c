@@ -78,7 +78,12 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-              set_info(nextclasstime, tick_time, "Lunch", 5);
+      if(settings.lunchactivitydays[0]){
+        set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
+      }
+      else{
+        set_info(nextclasstime, tick_time, "Lunch", 5);
+      }
           }
 
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 4
@@ -144,10 +149,15 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
               set_info(nextclasstime, tick_time, settings.blk8name, sizeof(settings.blk8name));
           }
 
-    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
-              nextclasstime.tm_hour = 12;
+    else if (tick_time.tm_hour < 22 || (tick_time.tm_hour == 22 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
+              nextclasstime.tm_hour = 22;
               nextclasstime.tm_min = 8;
-              set_info(nextclasstime, tick_time, "Lunch", 5);
+      if(settings.lunchactivitydays[1]){
+        set_info(nextclasstime, tick_time, settings.lunchactivitytue, sizeof(settings.lunchactivitytue));
+      }
+      else{
+        set_info(nextclasstime, tick_time, "Lunch", 5);
+      }
           }
 
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 1
@@ -216,7 +226,12 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 5, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-              set_info(nextclasstime, tick_time, "Lunch", 5);
+      if(settings.lunchactivitydays[2]){
+        set_info(nextclasstime, tick_time, settings.lunchactivitywed, sizeof(settings.lunchactivitywed));
+      }
+      else{
+        set_info(nextclasstime, tick_time, "Lunch", 5);
+      }
           }
 
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 6
@@ -285,7 +300,12 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 2, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-              set_info(nextclasstime, tick_time, "Lunch", 5);
+      if(settings.lunchactivitydays[3]){
+        set_info(nextclasstime, tick_time, settings.lunchactivitythu, sizeof(settings.lunchactivitythu));
+      }
+      else{
+        set_info(nextclasstime, tick_time, "Lunch", 5);
+      }
           }
 
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 3
@@ -323,6 +343,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     }
       
 }
+  
 }
 
 
@@ -366,18 +387,30 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
   strncpy(settings.blk6name, "Physics", 7);
   strncpy(settings.blk7name, "Chem", 4);
   strncpy(settings.blk8name, "Spare", 5);
-  settings.afterschooldays[0] = true;
   int i;
-  for(i = 1; i < 4; i++){
+  for(i = 0; i < 4; i++){
     settings.afterschooldays[i] = false;
     printf("%i", settings.afterschooldays[i]);}
+  settings.afterschooldays[0] = true;
+  
+  for(i = 0; i < 4; i++){
+    settings.lunchactivitydays[i] = false;
+    printf("%i", settings.lunchactivitydays[i]);}
+  settings.lunchactivitydays[0] = true; //Monday
+  settings.lunchactivitydays[2] = true; //Wednesday
+  
   settings.afterschoolendtimes[0][0] = 16;
   settings.afterschoolendtimes[0][1] = 30;
-  strncpy(settings.afterschoolmon, "RnB", 4);
+  strncpy(settings.afterschoolmon, "RnB", 3);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
   strncpy(settings.afterschoolmon, "", 1);
+  strncpy(settings.lunchactivitymon, "Jazz", 4);
+  strncpy(settings.lunchactivitytue, "", 1);
+  strncpy(settings.lunchactivitywed, "Jazz", 4);
+  strncpy(settings.lunchactivitythu, "", 1);
+  strncpy(settings.lunchactivityfri, "", 1);
   printf("defaults loaded");
 }
 

@@ -26,7 +26,13 @@
             "afterschoolwedname",
             "afterschoolthuname",
             "afterschoolfriname",
-            "afterschoolendtimes[5]"
+            "afterschoolendtimes[5]",
+            "lunchactivitydays[5]",
+            "lunchactivitymon",
+            "lunchactivitytue",
+            "lunchactivitywed",
+            "lunchactivitythu",
+            "lunchactivityfri"
         ],
         "projectType": "native",
         "resources": {
