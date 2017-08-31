@@ -50,7 +50,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
   
   //Monday
   if(strncmp(currentDayName, "Mon", 2) == 0){
-    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Monday blk1     TIME CODE HERE WORKS?
+    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Monday blk1
         nextclasstime.tm_hour = 8;
         nextclasstime.tm_min = 25;
         set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
@@ -63,7 +63,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
         set_info(nextclasstime, tick_time, "Focus", 5);
         }          
     
-    else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Advisory, next block is 2
+    else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 2
               nextclasstime.tm_hour = 10;
               nextclasstime.tm_min = 6;
               set_info(nextclasstime, tick_time, settings.blk2name, sizeof(settings.blk2name));
@@ -116,6 +116,75 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     }
       
     }
+  
+  //Tuesday
+  if(strncmp(currentDayName, "Tue", 2) == 0){
+    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Tuesday blk6
+        nextclasstime.tm_hour = 8;
+        nextclasstime.tm_min = 25;
+        set_info(nextclasstime, tick_time, settings.blk6name, sizeof(settings.blk6name));
+      }
+           
+    
+    else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 6, next block is advisory
+        nextclasstime.tm_hour = 9;
+        nextclasstime.tm_min = 21;
+        set_info(nextclasstime, tick_time, "Focus", 5);
+        }          
+    
+    else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 7
+              nextclasstime.tm_hour = 10;
+              nextclasstime.tm_min = 6;
+              set_info(nextclasstime, tick_time, settings.blk7name, sizeof(settings.blk7name));
+          }
+
+    else if (tick_time.tm_hour < 11 || (tick_time.tm_hour == 11 && tick_time.tm_min < 7)){ //In block 2, next block is 8
+              nextclasstime.tm_hour = 11;
+              nextclasstime.tm_min = 7;
+              set_info(nextclasstime, tick_time, settings.blk8name, sizeof(settings.blk8name));
+          }
+
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
+              nextclasstime.tm_hour = 12;
+              nextclasstime.tm_min = 8;
+              set_info(nextclasstime, tick_time, "Lunch", 5);
+          }
+
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 56)){ //In Lunch, next block is 1
+              nextclasstime.tm_hour = 12;
+              nextclasstime.tm_min = 56;
+              set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
+          }
+
+    else if (tick_time.tm_hour < 1 || (tick_time.tm_hour == 1 && tick_time.tm_min < 57)){ //In block 1, next block is 2
+              nextclasstime.tm_hour = 1;
+              nextclasstime.tm_min = 57;
+              set_info(nextclasstime, tick_time, settings.blk2name, sizeof(settings.blk2name));
+          }
+    
+    else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 2, next block is either freedom or afterschoolmon
+              nextclasstime.tm_hour = 2;
+              nextclasstime.tm_min = 59;
+              if(settings.afterschooldays[0]){
+                set_info(nextclasstime, tick_time, settings.afterschooltue, sizeof(settings.afterschooltue));
+              }
+                else
+                  set_info(nextclasstime, tick_time, "Freedom", 7);
+    }
+    
+    else if (settings.afterschooldays[1] && ((tick_time.tm_hour < settings.afterschoolendtimes[1][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[1][0] && tick_time.tm_min < settings.afterschoolendtimes[1][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+              nextclasstime.tm_hour = settings.afterschoolendtimes[0][0];
+              nextclasstime.tm_min = settings.afterschoolendtimes[0][1];
+              set_info(nextclasstime, tick_time, "Freedom", 7);
+          }
+    else {
+      nextclasstime.tm_wday = 3;
+      nextclasstime.tm_hour = 8;
+      nextclasstime.tm_min = 25;
+      set_info(nextclasstime, tick_time, settings.blk3name, sizeof(settings.blk3name));
+    }
+      
+}
 }
 
 
