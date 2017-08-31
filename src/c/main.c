@@ -344,6 +344,73 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
       
 }
   
+  //Friday
+  if(strncmp(currentDayName, "Fri", 2) == 0){
+    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Friday blk5
+        nextclasstime.tm_hour = 8;
+        nextclasstime.tm_min = 25;
+        set_info(nextclasstime, tick_time, settings.blk5name, sizeof(settings.blk5name));
+      }
+           
+    
+    else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 5, next block is Focus
+        nextclasstime.tm_hour = 9;
+        nextclasstime.tm_min = 21;
+        set_info(nextclasstime, tick_time, "Focus", 5);
+        }          
+    
+    else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 22)){ //In Focus, next block is 6
+              nextclasstime.tm_hour = 10;
+              nextclasstime.tm_min = 22;
+              set_info(nextclasstime, tick_time, settings.blk6name, sizeof(settings.blk6name));
+          }
+
+    else if (tick_time.tm_hour < 11 || (tick_time.tm_hour == 11 && tick_time.tm_min < 23)){ //In block 6, next block is Lunch
+              nextclasstime.tm_hour = 11;
+              nextclasstime.tm_min = 23;
+      if(settings.lunchactivitydays[4]){
+        set_info(nextclasstime, tick_time, settings.lunchactivityfri, sizeof(settings.lunchactivityfri));
+      }
+      else{
+        set_info(nextclasstime, tick_time, "Lunch", 5);
+      }
+          }
+
+    else if (tick_time.tm_hour < 11 || (tick_time.tm_hour == 11 && tick_time.tm_min < 53)){ //In Lunch, next block is 7
+              nextclasstime.tm_hour = 11;
+              nextclasstime.tm_min = 53;
+              set_info(nextclasstime, tick_time, settings.blk7name, sizeof(settings.blk7name));
+          }
+
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 54)){ //In block 7, next block is 8
+              nextclasstime.tm_hour = 12;
+              nextclasstime.tm_min = 54;
+              set_info(nextclasstime, tick_time, settings.blk8name, sizeof(settings.blk8name));
+          }
+    
+    else if (tick_time.tm_hour < 1 || (tick_time.tm_hour == 1 && tick_time.tm_min < 55)){ //In block 8, next block is either freedom or afterschoolmon
+              nextclasstime.tm_hour = 1;
+              nextclasstime.tm_min = 55;
+              if(settings.afterschooldays[4]){
+                set_info(nextclasstime, tick_time, settings.afterschoolfri, sizeof(settings.afterschoolfri));
+              }
+                else
+                  set_info(nextclasstime, tick_time, "Freedom", 7);
+    }
+    
+    else if (settings.afterschooldays[4] && ((tick_time.tm_hour < settings.afterschoolendtimes[4][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[4][0] && tick_time.tm_min < settings.afterschoolendtimes[4][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+              nextclasstime.tm_hour = settings.afterschoolendtimes[4][0];
+              nextclasstime.tm_min = settings.afterschoolendtimes[4][1];
+              set_info(nextclasstime, tick_time, "Freedom", 7);
+          }
+    else {
+      nextclasstime.tm_wday = 1;
+      nextclasstime.tm_hour = 8;
+      nextclasstime.tm_min = 25;
+      set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
+    }
+      
+}
 }
 
 
@@ -388,12 +455,12 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
   strncpy(settings.blk7name, "Chem", 4);
   strncpy(settings.blk8name, "Spare", 5);
   int i;
-  for(i = 0; i < 4; i++){
+  for(i = 0; i < 5; i++){
     settings.afterschooldays[i] = false;
     printf("%i", settings.afterschooldays[i]);}
   settings.afterschooldays[0] = true;
   
-  for(i = 0; i < 4; i++){
+  for(i = 0; i < 5; i++){
     settings.lunchactivitydays[i] = false;
     printf("%i", settings.lunchactivitydays[i]);}
   settings.lunchactivitydays[0] = true; //Monday
@@ -554,11 +621,15 @@ static void init()  {
   // Show the Window on the watch, with animated=true
   window_stack_push(s_main_window, true);
   
+  // Register with TickTimerService
+  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  
   // Make sure time is displayed from the start
   update_time();
 }
 
 static void deinit()  {
+  tick_timer_service_unsubscribe();
   // Destroy Window
   window_destroy(s_main_window);
 }
@@ -567,6 +638,4 @@ int main(void)  {
   init();
   app_event_loop();
   deinit();
-  // Register with TickTimerService
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 }

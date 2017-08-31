@@ -13,9 +13,9 @@ typedef struct ClaySettings {
   char blk6name[8];
   char blk7name[8];
   char blk8name[8];
-  bool afterschooldays[4];
-  bool lunchactivitydays[4];
-  int afterschoolendtimes[4][2];
+  bool afterschooldays[5];
+  bool lunchactivitydays[5];
+  int afterschoolendtimes[5][2];
   char afterschoolmon[8];
   char afterschooltue[8];
   char afterschoolwed[8];
