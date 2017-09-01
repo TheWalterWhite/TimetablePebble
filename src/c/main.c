@@ -20,17 +20,14 @@ static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsiz
   timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
   const time_t temp2 = timeleft; 
   struct tm* test = localtime(&temp2); //Yes the time manager is called test.
-  strftime(a, sizeof(a), "%R", test);
+  strftime(a, sizeof(a), "%k:%M", test);
   strncpy(nextclass, blknum, stringsize);
 }
 
 static void next_class(char* nextclass_return, char* currentTime24h, tm tick_time)  {
 
-  // Sync day, month, year, etc
+  // Sync day, month, year, etc to nextclasstime so we can manipulate just the hour and minute
   nextclasstime = tick_time; 
-    
-  // Initialise the time manager for time left
-
   
   // Make sure you're not some loser who uses this watchface on a weekend(and if you are set next block to 1)
   if(strncmp(currentDayName, "Sat", 2) == 0 || (strncmp(currentDayName, "Sun", 2) == 0 && (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)))) {
@@ -422,7 +419,7 @@ static void update_time()  {
   //Write the current hours and minutes into a buffer
   static char s_buffer[8];
   strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
-           "%H:%M" : "%I:%M", tick_time);
+           "%H:%M" : "%l:%M", tick_time);
   
   // Get abbriviated day name and current time
   strftime(currentDayName, 4, "%a", tick_time);
@@ -484,7 +481,6 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
 static void prv_load_settings() {
   // Load the default settings
   prv_default_settings();
-  printf("Default: %s", settings.blk1name);
   
   // Read settings from persistent storage, if they exist
   //persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
