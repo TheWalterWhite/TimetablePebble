@@ -19,7 +19,7 @@ static testSettings testset;
 static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsize)  { //Stringsize has to be passed here because sizeof(blknum) returns either 0 or 4(idk) since it's a pointer
   timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
   const time_t temp2 = timeleft; 
-  struct tm* test = localtime(&temp2); //Yes the time manager is called test.
+  struct tm* test = gmtime(&temp2); //Yes the time manager is called test.
   strftime(a, sizeof(a), "%k:%M", test);
   strncpy(nextclass, blknum, stringsize);
 }
@@ -38,7 +38,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
   }  
      
    else if(strncmp(currentDayName, "Sun", 2) == 0){
-    nextclasstime.tm_wday = 1;
+    //nextclasstime.tm_wday = 1;
     nextclasstime.tm_hour = 8;
     nextclasstime.tm_min = 25;
     set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
@@ -71,10 +71,10 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
               set_info(nextclasstime, tick_time, settings.blk3name, sizeof(settings.blk3name));
           }
 
-    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
-              nextclasstime.tm_hour = 12;
+    else if (tick_time.tm_hour < 22 || (tick_time.tm_hour == 22 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
+              nextclasstime.tm_hour = 22;
               nextclasstime.tm_min = 8;
-      if(settings.lunchactivitydays[0]){
+      if(strncmp(settings.lunchactivitymon, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
       }
       else{
@@ -97,14 +97,14 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
               nextclasstime.tm_hour = 2;
               nextclasstime.tm_min = 59;
-              if(settings.afterschooldays[0]){
+              if(strncmp(settings.afterschoolmon, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolmon, sizeof(settings.afterschoolmon));
               }
                 else
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (settings.afterschooldays[0] && ((tick_time.tm_hour < settings.afterschoolendtimes[0][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[0][0] && tick_time.tm_min < settings.afterschoolendtimes[0][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+    else if (strncmp(settings.afterschoolmon, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[0][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[0][0] && tick_time.tm_min < settings.afterschoolendtimes[0][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
               nextclasstime.tm_hour = settings.afterschoolendtimes[0][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[0][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
@@ -148,7 +148,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 22 || (tick_time.tm_hour == 22 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
               nextclasstime.tm_hour = 22;
               nextclasstime.tm_min = 8;
-      if(settings.lunchactivitydays[1]){
+      if(strncmp(settings.lunchactivitytue, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitytue, sizeof(settings.lunchactivitytue));
       }
       else{
@@ -171,14 +171,14 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 2, next block is either freedom or afterschoolmon
               nextclasstime.tm_hour = 2;
               nextclasstime.tm_min = 59;
-              if(settings.afterschooldays[1]){
+              if(strncmp(settings.afterschooltue, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschooltue, sizeof(settings.afterschooltue));
               }
                 else
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (settings.afterschooldays[1] && ((tick_time.tm_hour < settings.afterschoolendtimes[1][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[1][0] && tick_time.tm_min < settings.afterschoolendtimes[1][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+    else if (strncmp(settings.afterschooltue, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[1][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[1][0] && tick_time.tm_min < settings.afterschoolendtimes[1][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
               nextclasstime.tm_hour = settings.afterschoolendtimes[1][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[1][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
@@ -222,7 +222,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 5, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-      if(settings.lunchactivitydays[2]){
+      if(strncmp(settings.lunchactivitywed, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitywed, sizeof(settings.lunchactivitywed));
       }
       else{
@@ -245,14 +245,14 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 7, next block is either freedom or afterschoolmon
               nextclasstime.tm_hour = 2;
               nextclasstime.tm_min = 59;
-              if(settings.afterschooldays[2]){
+              if(strncmp(settings.afterschoolwed, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolwed, sizeof(settings.afterschoolwed));
               }
                 else
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (settings.afterschooldays[2] && ((tick_time.tm_hour < settings.afterschoolendtimes[2][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[2][0] && tick_time.tm_min < settings.afterschoolendtimes[2][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+    else if (strncmp(settings.afterschoolwed, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[2][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[2][0] && tick_time.tm_min < settings.afterschoolendtimes[2][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
               nextclasstime.tm_hour = settings.afterschoolendtimes[2][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[2][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
@@ -296,7 +296,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 2, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-      if(settings.lunchactivitydays[3]){
+      if(strncmp(settings.lunchactivitythu, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitythu, sizeof(settings.lunchactivitythu));
       }
       else{
@@ -319,14 +319,14 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 2 || (tick_time.tm_hour == 2 && tick_time.tm_min < 59)){ //In block 4, next block is either freedom or afterschoolmon
               nextclasstime.tm_hour = 2;
               nextclasstime.tm_min = 59;
-              if(settings.afterschooldays[3]){
+              if(strncmp(settings.afterschoolthu, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolthu, sizeof(settings.afterschoolthu));
               }
                 else
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (settings.afterschooldays[3] && ((tick_time.tm_hour < settings.afterschoolendtimes[3][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[3][0] && tick_time.tm_min < settings.afterschoolendtimes[3][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+    else if (strncmp(settings.afterschoolthu, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[3][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[3][0] && tick_time.tm_min < settings.afterschoolendtimes[3][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
               nextclasstime.tm_hour = settings.afterschoolendtimes[3][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[3][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
@@ -364,7 +364,7 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 11 || (tick_time.tm_hour == 11 && tick_time.tm_min < 23)){ //In block 6, next block is Lunch
               nextclasstime.tm_hour = 11;
               nextclasstime.tm_min = 23;
-      if(settings.lunchactivitydays[4]){
+      if(strncmp(settings.lunchactivityfri, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivityfri, sizeof(settings.lunchactivityfri));
       }
       else{
@@ -387,14 +387,14 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     else if (tick_time.tm_hour < 1 || (tick_time.tm_hour == 1 && tick_time.tm_min < 55)){ //In block 8, next block is either freedom or afterschoolmon
               nextclasstime.tm_hour = 1;
               nextclasstime.tm_min = 55;
-              if(settings.afterschooldays[4]){
+              if(strncmp(settings.afterschoolfri, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolfri, sizeof(settings.afterschoolfri));
               }
                 else
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (settings.afterschooldays[4] && ((tick_time.tm_hour < settings.afterschoolendtimes[4][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[4][0] && tick_time.tm_min < settings.afterschoolendtimes[4][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
+    else if (strncmp(settings.afterschoolfri, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[4][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[4][0] && tick_time.tm_min < settings.afterschoolendtimes[4][1]))){ //In block 4, next block is 5            IGNORE ERROR HERE UNTIL IT STOPS COMPILING
               nextclasstime.tm_hour = settings.afterschoolendtimes[4][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[4][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
@@ -450,26 +450,16 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
   strncpy(settings.blk6name, "Physics", 7);
   strncpy(settings.blk7name, "Chem", 4);
   strncpy(settings.blk8name, "Spare", 5);
-  int i;
-  for(i = 0; i < 5; i++){
-    settings.afterschooldays[i] = false;}
-  settings.afterschooldays[0] = true;
-  
-  for(i = 0; i < 5; i++){
-    settings.lunchactivitydays[i] = false;}
-  settings.lunchactivitydays[0] = true; //Monday
-  settings.lunchactivitydays[2] = true; //Wednesday
-  
-  settings.afterschoolendtimes[0][0] = 16;
-  settings.afterschoolendtimes[0][1] = 30;
+  settings.afterschoolendtimes[0][0] = 16; //4:30pm monday
+  settings.afterschoolendtimes[0][1] = 30; 
   strncpy(settings.afterschoolmon, "RnB", 3);
-  strncpy(settings.afterschoolmon, "", 1);
-  strncpy(settings.afterschoolmon, "", 1);
-  strncpy(settings.afterschoolmon, "", 1);
-  strncpy(settings.afterschoolmon, "", 1);
-  strncpy(settings.lunchactivitymon, "Jazz", 4);
+  strncpy(settings.afterschooltue, "", 1);
+  strncpy(settings.afterschoolwed, "", 1);
+  strncpy(settings.afterschoolthu, "", 1);
+  strncpy(settings.afterschoolfri, "", 1);
+  strncpy(settings.lunchactivitymon, "", 4);
   strncpy(settings.lunchactivitytue, "", 1);
-  strncpy(settings.lunchactivitywed, "Jazz", 4);
+  strncpy(settings.lunchactivitywed, "", 4);
   strncpy(settings.lunchactivitythu, "", 1);
   strncpy(settings.lunchactivityfri, "", 1);
   printf("defaults loaded");
@@ -480,7 +470,7 @@ static void prv_load_settings() {
   prv_default_settings();
   
   // Read settings from persistent storage, if they exist
-  //persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+  persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
   printf("settings loaded");
 }
 
@@ -513,6 +503,22 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   Tuple *blk8_t = dict_find(iter, MESSAGE_KEY_blkeightname);
   if(blk8_t) {
     strncpy(settings.blk8name, blk8_t->value->cstring + 0, 10);}
+  Tuple *lunmon_t = dict_find(iter, MESSAGE_KEY_lunchactivitymon);
+  if(lunmon_t) {
+    strncpy(settings.lunchactivitymon, lunmon_t->value->cstring + 0, 10);}
+  Tuple *luntue_t = dict_find(iter, MESSAGE_KEY_lunchactivitytue);
+  if(luntue_t) {
+    strncpy(settings.lunchactivitytue, luntue_t->value->cstring + 0, 10);}
+  Tuple *lunwed_t = dict_find(iter, MESSAGE_KEY_lunchactivitywed);
+  if(lunwed_t) {
+    strncpy(settings.lunchactivitywed, lunwed_t->value->cstring + 0, 10);}
+  Tuple *lunthu_t = dict_find(iter, MESSAGE_KEY_lunchactivitythu);
+  if(lunthu_t) {
+    strncpy(settings.lunchactivitythu, lunthu_t->value->cstring + 0, 10);}
+  Tuple *lunfri_t = dict_find(iter, MESSAGE_KEY_lunchactivityfri);
+  if(lunfri_t) {
+    strncpy(settings.lunchactivityfri, lunfri_t->value->cstring + 0, 10);}
+//  Tuple *endt_t = dict_find(iter, MESSAGE_KEY_afterschoolendtimes);      //This was too much work to justify. Set the end times in the defaults if you need to
  
   prv_save_settings();
 }

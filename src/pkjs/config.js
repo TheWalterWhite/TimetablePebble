@@ -68,24 +68,6 @@ module.exports = [
         "defaultValue": "After School"
       },
       {
-        "type": "checkboxgroup",
-        "messageKey": "afterschooldays",
-        "label": "Days with after school activities",
-        "defaultValue": [false, false, false, false, false],
-        "options": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-      },
-      {
-        "type": "checkboxgroup",
-        "messageKey": "lunchavtivitydays",
-        "label": "Days with lunch activities",
-        "defaultValue": [false, false, false, false, false],
-        "options": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-      },
-      {
-        "type": "heading",
-        "defaultValue": "Activity Names"
-      },
-      {
         "type": "input",
         "messageKey": "afterschoolmonname",
         "defaultValue": "",
@@ -114,6 +96,10 @@ module.exports = [
         "messageKey": "afterschoolfriname",
         "defaultValue": "",
         "label": "Friday After School",
+      },
+      {
+        "type": "heading",
+        "defaultValue": "Lunch"
       },
       {
         "type": "input",

@@ -21,14 +21,11 @@
             "blksixname",
             "blksevenname",
             "blkeightname",
-            "afterschooldays",
             "afterschoolmon",
             "afterschooltue",
             "afterschoolwed",
             "afterschoolthu",
             "afterschoolfri",
-            "afterschoolendtimes",
-            "lunchactivitydays",
             "lunchactivitymon",
             "lunchactivitytue",
             "lunchactivitywed",
@@ -44,8 +41,7 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite",
-            "emery"
+            "diorite"
         ],
         "uuid": "372141e0-4146-4d90-b3af-7a91f02d6d74",
         "watchapp": {
