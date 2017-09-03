@@ -4,7 +4,7 @@
 #define SETTINGS_KEY 1
 
 // Define our settings struct
-typedef struct ClaySettings {
+ typedef struct ClaySettings {
   char blk1name[8];
   char blk2name[8];
   char blk3name[8];
@@ -27,6 +27,10 @@ typedef struct ClaySettings {
   char lunchactivitythu[8];
   char lunchactivityfri[8];
 } __attribute__((__packed__)) ClaySettings;
+
+typedef struct testSettings {
+  bool truefalse;
+} __attribute__((__packed__)) testSettings;
 
 static void prv_default_settings();
 static void prv_load_settings();

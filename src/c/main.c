@@ -11,10 +11,10 @@ char currentDayName[10];
 char currentTime24h[1];
 static char a[8];
 double timeleft;
-// Name of next class, declared as an array 'cause why not
 char nextclass[10];
 
 static ClaySettings settings;
+static testSettings testset;
 
 static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsize)  { //Stringsize has to be passed here because sizeof(blknum) returns either 0 or 4(idk) since it's a pointer
   timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
@@ -35,10 +35,9 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
     strncpy(a, "", 1);
     text_layer_set_text(s_until_layer, "Monday");
     text_layer_set_text(s_time_left_layer, "");
-  }
+  }  
      
-     
-   if(strncmp(currentDayName, "Sun", 2) == 0){
+   else if(strncmp(currentDayName, "Sun", 2) == 0){
     nextclasstime.tm_wday = 1;
     nextclasstime.tm_hour = 8;
     nextclasstime.tm_min = 25;
@@ -453,13 +452,11 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
   strncpy(settings.blk8name, "Spare", 5);
   int i;
   for(i = 0; i < 5; i++){
-    settings.afterschooldays[i] = false;
-    printf("%i", settings.afterschooldays[i]);}
+    settings.afterschooldays[i] = false;}
   settings.afterschooldays[0] = true;
   
   for(i = 0; i < 5; i++){
-    settings.lunchactivitydays[i] = false;
-    printf("%i", settings.lunchactivitydays[i]);}
+    settings.lunchactivitydays[i] = false;}
   settings.lunchactivitydays[0] = true; //Monday
   settings.lunchactivitydays[2] = true; //Wednesday
   
@@ -492,35 +489,30 @@ static void prv_load_settings() {
 // AppMessage receive handler
 static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
   //Read block names
-/*  Tuple *test_t = dict_find(iter, MESSAGE_KEY_testbool);
-  if(test_t){
-    settings.testbool = test_t->value->uint8;
-    printf("%i", settings.testbool);
-  } */
-  Tuple *blk1_t = dict_find(iter, MESSAGE_KEY_blk1name);
+  Tuple *blk1_t = dict_find(iter, MESSAGE_KEY_blkonename);
   if(blk1_t) {
-    strncpy(settings.blk1name, blk1_t->value->cstring, sizeof(blk1_t->value->cstring));}
-  Tuple *blk2_t = dict_find(iter, MESSAGE_KEY_blk2name);
+    strncpy(settings.blk1name, blk1_t->value->cstring + 0, 10);}
+  Tuple *blk2_t = dict_find(iter, MESSAGE_KEY_blktwoname);
   if(blk2_t) {
-    strncpy(settings.blk2name, blk2_t->value->cstring, sizeof(blk2_t->value->cstring));}
-  Tuple *blk3_t = dict_find(iter, MESSAGE_KEY_blk3name);
+    strncpy(settings.blk2name, blk2_t->value->cstring + 0, 10);}
+  Tuple *blk3_t = dict_find(iter, MESSAGE_KEY_blkthreename);
   if(blk3_t) {
-    strncpy(settings.blk3name, blk3_t->value->cstring, sizeof(blk3_t->value->cstring));}
-  Tuple *blk4_t = dict_find(iter, MESSAGE_KEY_blk4name);
+    strncpy(settings.blk3name, blk3_t->value->cstring + 0, 10);}
+  Tuple *blk4_t = dict_find(iter, MESSAGE_KEY_blkfourname);
   if(blk4_t) {
-    strncpy(settings.blk4name, blk4_t->value->cstring, sizeof(blk4_t->value->cstring));}
-  Tuple *blk5_t = dict_find(iter, MESSAGE_KEY_blk5name);
-  if(blk1_t) {
-    strncpy(settings.blk5name, blk5_t->value->cstring, sizeof(blk5_t->value->cstring));}
-  Tuple *blk6_t = dict_find(iter, MESSAGE_KEY_blk6name);
+    strncpy(settings.blk4name, blk4_t->value->cstring + 0, 10);}
+  Tuple *blk5_t = dict_find(iter, MESSAGE_KEY_blkfivename);
+  if(blk5_t) {
+    strncpy(settings.blk5name, blk5_t->value->cstring + 0, 10);}
+  Tuple *blk6_t = dict_find(iter, MESSAGE_KEY_blksixname);
   if(blk6_t) {
-    strncpy(settings.blk6name, blk6_t->value->cstring, sizeof(blk6_t->value->cstring));}
-  Tuple *blk7_t = dict_find(iter, MESSAGE_KEY_blk7name);
+    strncpy(settings.blk6name, blk6_t->value->cstring + 0, 10);}
+  Tuple *blk7_t = dict_find(iter, MESSAGE_KEY_blksevenname);
   if(blk7_t) {
-    strncpy(settings.blk7name, blk7_t->value->cstring, sizeof(blk7_t->value->cstring));}
-  Tuple *blk8_t = dict_find(iter, MESSAGE_KEY_blk8name);
+    strncpy(settings.blk7name, blk7_t->value->cstring + 0, 10);}
+  Tuple *blk8_t = dict_find(iter, MESSAGE_KEY_blkeightname);
   if(blk8_t) {
-    strncpy(settings.blk8name, blk8_t->value->cstring, sizeof(blk8_t->value->cstring));}
+    strncpy(settings.blk8name, blk8_t->value->cstring + 0, 10);}
  
   prv_save_settings();
 }
@@ -567,7 +559,12 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_until_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_until_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_until_layer), GRect(0, 100, bounds.size.w, bounds.size.h));
-  text_layer_set_text(s_until_layer, "Until");
+  if (testset.truefalse == false){
+    text_layer_set_text(s_until_layer, "Until");
+  }
+  else{
+    text_layer_set_text(s_until_layer, "True");
+  }
   
   // Layout for middle layer 2
   text_layer_set_background_color(s_class_layer, GColorClear);
@@ -603,7 +600,7 @@ static void init()  {
   prv_load_settings();
   // Open AppMessage connection
   app_message_register_inbox_received(prv_inbox_received_handler);
-  app_message_open(256, 256);
+  app_message_open(512, 512);
   
   // Create main Window element and assign to pointer
   s_main_window = window_create();
@@ -626,6 +623,7 @@ static void init()  {
 
 static void deinit()  {
   tick_timer_service_unsubscribe();
+  app_message_deregister_callbacks();
   // Destroy Window
   window_destroy(s_main_window);
 }

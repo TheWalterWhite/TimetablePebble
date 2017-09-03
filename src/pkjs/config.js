@@ -12,7 +12,7 @@ module.exports = [
       },
       {
         "type": "input",
-        "messageKey": "blk1name",
+        "messageKey": "blkonename",
         "defaultValue": "",
         "label": "Block 1",
       },
@@ -75,6 +75,13 @@ module.exports = [
         "options": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
       },
       {
+        "type": "checkboxgroup",
+        "messageKey": "lunchavtivitydays",
+        "label": "Days with lunch activities",
+        "defaultValue": [false, false, false, false, false],
+        "options": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+      },
+      {
         "type": "heading",
         "defaultValue": "Activity Names"
       },
@@ -82,31 +89,61 @@ module.exports = [
         "type": "input",
         "messageKey": "afterschoolmonname",
         "defaultValue": "",
-        "label": "Monday",
+        "label": "Monday After School",
       },
       {
         "type": "input",
         "messageKey": "afterschooltuename",
         "defaultValue": "",
-        "label": "Teusday",
+        "label": "Teusday After School",
       },
       {
         "type": "input",
         "messageKey": "afterschoolwedname",
         "defaultValue": "",
-        "label": "Wednesday",
+        "label": "Wednesday After School",
       },
       {
         "type": "input",
         "messageKey": "afterschoolthuname",
         "defaultValue": "",
-        "label": "Thursday",
+        "label": "Thursday After School",
       },
       {
         "type": "input",
         "messageKey": "afterschoolfriname",
         "defaultValue": "",
-        "label": "Friday",
+        "label": "Friday After School",
+      },
+      {
+        "type": "input",
+        "messageKey": "lunchactivitymon",
+        "defaultValue": "",
+        "label": "Monday Lunch",
+      },
+      {
+        "type": "input",
+        "messageKey": "lunchactivitytue",
+        "defaultValue": "",
+        "label": "Tuesday Lunch",
+      },
+      {
+        "type": "input",
+        "messageKey": "lunchactivitywed",
+        "defaultValue": "",
+        "label": "Wednesday Lunch",
+      },
+      {
+        "type": "input",
+        "messageKey": "lunchactivitythu",
+        "defaultValue": "",
+        "label": "Thursday Lunch",
+      },
+      {
+        "type": "input",
+        "messageKey": "lunchactivityfri",
+        "defaultValue": "",
+        "label": "Friday Lunch",
       }
     ]
   },
