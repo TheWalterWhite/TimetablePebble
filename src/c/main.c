@@ -93,8 +93,8 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
               set_info(nextclasstime, tick_time, settings.blk5name, sizeof(settings.blk5name));
           }
     
-    else if (tick_time.tm_hour < 15 || (tick_time.tm_hour == 15 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
-              nextclasstime.tm_hour = 15;
+    else if (tick_time.tm_hour < 14 || (tick_time.tm_hour == 14 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
+              nextclasstime.tm_hour = 14;
               nextclasstime.tm_min = 59;
               if(strncmp(settings.afterschoolmon, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolmon, sizeof(settings.afterschoolmon));
