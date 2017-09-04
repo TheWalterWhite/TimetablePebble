@@ -1,7 +1,7 @@
 #pragma once
 #include <pebble.h>
 // Persistent storage key
-#define SETTINGS_KEY 2
+#define SETTINGS_KEY 3
 
 // Define our settings struct
  typedef struct ClaySettings {
