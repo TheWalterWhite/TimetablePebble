@@ -93,8 +93,8 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
               set_info(nextclasstime, tick_time, settings.blk5name, sizeof(settings.blk5name));
           }
     
-    else if (tick_time.tm_hour < 14 || (tick_time.tm_hour == 14 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
-              nextclasstime.tm_hour = 14;
+    else if (tick_time.tm_hour < 15 || (tick_time.tm_hour == 15 && tick_time.tm_min < 59)){ //In block 5, next block is either freedom or afterschoolmon
+              nextclasstime.tm_hour = 15;
               nextclasstime.tm_min = 59;
               if(strncmp(settings.afterschoolmon, "", 1) != 0){
                 set_info(nextclasstime, tick_time, settings.afterschoolmon, sizeof(settings.afterschoolmon));
@@ -507,6 +507,7 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   Tuple *blk8_t = dict_find(iter, MESSAGE_KEY_blkeightname);
   if(blk8_t) {
     strncpy(settings.blk8name, blk8_t->value->cstring + 0, 10);}
+  // Lunch Activities
   Tuple *lunmon_t = dict_find(iter, MESSAGE_KEY_lunchactivitymon);
   if(lunmon_t) {
     strncpy(settings.lunchactivitymon, lunmon_t->value->cstring + 0, 10);}
@@ -523,6 +524,22 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   if(lunfri_t) {
     strncpy(settings.lunchactivityfri, lunfri_t->value->cstring + 0, 10);}
 //  Tuple *endt_t = dict_find(iter, MESSAGE_KEY_afterschoolendtimes);      //This was too much work to justify. Set the end times in the defaults if you need to
+  // After School Activities
+  Tuple *aftmon_t = dict_find(iter, MESSAGE_KEY_afterschoolmon);
+  if(aftmon_t) {
+    strncpy(settings.afterschoolmon, aftmon_t->value->cstring + 0, 10);}
+  Tuple *afttue_t = dict_find(iter, MESSAGE_KEY_afterschooltue);
+  if(afttue_t) {
+    strncpy(settings.afterschooltue, afttue_t->value->cstring + 0, 10);}
+  Tuple *aftwed_t = dict_find(iter, MESSAGE_KEY_afterschoolwed);
+  if(aftwed_t) {
+    strncpy(settings.afterschoolwed, aftwed_t->value->cstring + 0, 10);}
+  Tuple *aftthu_t = dict_find(iter, MESSAGE_KEY_afterschoolthu);
+  if(aftthu_t) {
+    strncpy(settings.afterschoolthu, aftthu_t->value->cstring + 0, 10);}
+  Tuple *aftfri_t = dict_find(iter, MESSAGE_KEY_afterschoolfri);
+  if(aftfri_t) {
+    strncpy(settings.afterschoolfri, aftfri_t->value->cstring + 0, 10);}
   // Background Color
   Tuple *bg_color_t = dict_find(iter, MESSAGE_KEY_BackgroundColor);
   if (bg_color_t) {
