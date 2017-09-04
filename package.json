@@ -30,7 +30,9 @@
             "lunchactivitytue",
             "lunchactivitywed",
             "lunchactivitythu",
-            "lunchactivityfri"
+            "lunchactivityfri",
+            "BackgroundColor",
+            "ForegroundColor"
         ],
         "projectType": "native",
         "resources": {

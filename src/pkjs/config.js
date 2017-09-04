@@ -8,6 +8,27 @@ module.exports = [
     "items": [
       {
         "type": "heading",
+        "defaultValue": "Colors"
+      },
+      {
+        "type": "color",
+        "messageKey": "BackgroundColor",
+        "defaultValue": "0xFFFFFF",
+        "label": "Background Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "ForegroundColor",
+        "defaultValue": "0x000000",
+        "label": "Foreground Color"
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
         "defaultValue": "Blocks"
       },
       {

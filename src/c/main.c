@@ -14,7 +14,6 @@ double timeleft;
 char nextclass[10];
 
 static ClaySettings settings;
-static testSettings testset;
 
 static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsize)  { //Stringsize has to be passed here because sizeof(blknum) returns either 0 or 4(idk) since it's a pointer
   timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
@@ -428,6 +427,7 @@ static void update_time()  {
   // Calls next_class to get the next class(Who would have thought??)
   next_class(nextclass, currentTime24h, *tick_time);
   
+
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
   text_layer_set_text(s_class_layer, nextclass);
@@ -442,6 +442,8 @@ static void prv_save_settings() {
 }
 
 static void prv_default_settings() { //Try and keep block names 7 characters max or they don't fit on a pebble time
+  settings.BackgroundColor = GColorWhite;
+  settings.ForegroundColor = GColorBlack;
   strncpy(settings.blk1name, "Math", 4);
   strncpy(settings.blk2name, "Band", 4);
   strncpy(settings.blk3name, "English", 7);
@@ -471,6 +473,8 @@ static void prv_load_settings() {
   
   // Read settings from persistent storage, if they exist
   persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+  
+
   printf("settings loaded");
 }
 
@@ -519,7 +523,20 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   if(lunfri_t) {
     strncpy(settings.lunchactivityfri, lunfri_t->value->cstring + 0, 10);}
 //  Tuple *endt_t = dict_find(iter, MESSAGE_KEY_afterschoolendtimes);      //This was too much work to justify. Set the end times in the defaults if you need to
- 
+  // Background Color
+  Tuple *bg_color_t = dict_find(iter, MESSAGE_KEY_BackgroundColor);
+  if (bg_color_t) {
+    settings.BackgroundColor = GColorFromHEX(bg_color_t->value->int32);
+    window_set_background_color(s_main_window, settings.BackgroundColor);
+  }
+  Tuple *fg_color_t = dict_find(iter, MESSAGE_KEY_ForegroundColor);
+  if (fg_color_t) {
+    settings.ForegroundColor = GColorFromHEX(fg_color_t->value->int32);
+    text_layer_set_text_color(s_time_layer, settings.ForegroundColor);
+    text_layer_set_text_color(s_until_layer, settings.ForegroundColor);
+    text_layer_set_text_color(s_class_layer, settings.ForegroundColor);
+    text_layer_set_text_color(s_time_left_layer, settings.ForegroundColor); 
+}
   prv_save_settings();
 }
   
@@ -553,35 +570,29 @@ static void main_window_load(Window *window) {
   
   //Layout for bottom time remaining
   text_layer_set_background_color(s_time_left_layer, GColorClear);
-  text_layer_set_text_color(s_time_left_layer, GColorBlack);
+  text_layer_set_text_color(s_time_left_layer, settings.ForegroundColor);
   text_layer_set_font(s_time_left_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
   text_layer_set_text_alignment(s_time_left_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_time_left_layer), GRect(0, 50, bounds.size.w, bounds.size.h));
-  text_layer_set_text(s_time_left_layer, "12:34");
   
   // Layout for middle layer 1
   text_layer_set_background_color(s_until_layer, GColorClear);
-  text_layer_set_text_color(s_until_layer, GColorBlack);
+  text_layer_set_text_color(s_until_layer, settings.ForegroundColor);
   text_layer_set_font(s_until_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_until_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_until_layer), GRect(0, 100, bounds.size.w, bounds.size.h));
-  if (testset.truefalse == false){
-    text_layer_set_text(s_until_layer, "Until");
-  }
-  else{
-    text_layer_set_text(s_until_layer, "True");
-  }
-  
+  text_layer_set_text(s_until_layer, "Until");
+
   // Layout for middle layer 2
   text_layer_set_background_color(s_class_layer, GColorClear);
-  text_layer_set_text_color(s_class_layer, GColorBlack);
+  text_layer_set_text_color(s_class_layer, settings.ForegroundColor);
   text_layer_set_font(s_class_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   text_layer_set_text_alignment(s_class_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_class_layer), GRect(0, 125, bounds.size.w, bounds.size.h));
   
   // Layout for top time
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_text_color(s_time_layer, GColorBlack);
+  text_layer_set_text_color(s_time_layer, settings.ForegroundColor);
   text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_time_layer), GRect(0, 0, bounds.size.w, bounds.size.h));

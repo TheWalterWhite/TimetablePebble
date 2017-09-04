@@ -5,6 +5,8 @@
 
 // Define our settings struct
  typedef struct ClaySettings {
+  GColor BackgroundColor;
+  GColor ForegroundColor;
   char blk1name[8];
   char blk2name[8];
   char blk3name[8];
