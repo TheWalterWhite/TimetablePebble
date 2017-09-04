@@ -1,7 +1,7 @@
 #pragma once
 #include <pebble.h>
 // Persistent storage key
-#define SETTINGS_KEY 3
+#define SETTINGS_KEY 1
 
 // Define our settings struct
  typedef struct ClaySettings {
@@ -28,16 +28,3 @@
   char lunchactivityfri[8];
 } __attribute__((__packed__)) ClaySettings;
 
-typedef struct testSettings {
-  bool truefalse;
-} __attribute__((__packed__)) testSettings;
-
-static void prv_default_settings();
-static void prv_load_settings();
-static void prv_save_settings();
-static void update_time();
-static void prv_inbox_received_handler(DictionaryIterator *iter, void *context);
-static void main_window_load(Window *window);
-static void main_window_unload(Window *window);
-static void init(void);
-static void deinit(void);
