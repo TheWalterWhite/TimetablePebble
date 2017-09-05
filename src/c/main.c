@@ -54,10 +54,10 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
         set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
       }
            
-    else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 1, next block is Focus
+    else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 1, next block is Advisory
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Focus", 5);
+        set_info(nextclasstime, tick_time, "Advisory", 5);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 2
