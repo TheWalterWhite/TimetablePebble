@@ -146,8 +146,8 @@ static void next_class(char* nextclass_return, char* currentTime24h, tm tick_tim
               set_info(nextclasstime, tick_time, settings.blk8name, sizeof(settings.blk8name));
           }
 
-    else if (tick_time.tm_hour < 22 || (tick_time.tm_hour == 22 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
-              nextclasstime.tm_hour = 22;
+    else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 8, next block is Lunch
+              nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
       if(strncmp(settings.lunchactivitytue, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitytue, sizeof(settings.lunchactivitytue));
@@ -477,7 +477,6 @@ static void prv_load_settings() {
   
   // Read settings from persistent storage, if they exist
   persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
-  printf("%s", settings.blk6name);
 
   printf("settings loaded");
 }
@@ -530,8 +529,7 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     strncpy(settings.blk5name, blk5_t->value->cstring + 0, 10);}
   Tuple *blk6_t = dict_find(iter, MESSAGE_KEY_blksixname);
   if(blk6_t) {
-    strncpy(settings.blk6name, blk6_t->value->cstring + 0, 10);
-    printf("%s", settings.blk6name);}
+    strncpy(settings.blk6name, blk6_t->value->cstring + 0, 10);}
   Tuple *blk7_t = dict_find(iter, MESSAGE_KEY_blksevenname);
   if(blk7_t) {
     strncpy(settings.blk7name, blk7_t->value->cstring + 0, 10);}
