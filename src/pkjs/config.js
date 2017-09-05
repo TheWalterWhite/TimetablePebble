@@ -21,6 +21,18 @@ module.exports = [
         "messageKey": "ForegroundColor",
         "defaultValue": "0x000000",
         "label": "Foreground Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "BatteryColor",
+        "defaultValue": "0x000000",
+        "label": "Battery Bar Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "LowBatteryColor",
+        "defaultValue": "0xFF0000",
+        "label": "Low Battery Bar Color"
       }
     ]
   },
@@ -39,43 +51,43 @@ module.exports = [
       },
       {
         "type": "input",
-        "messageKey": "blk2name",
+        "messageKey": "blktwoname",
         "defaultValue": "",
         "label": "Block 2",
       },
       {
         "type": "input",
-        "messageKey": "blk3name",
+        "messageKey": "blkthreename",
         "defaultValue": "",
         "label": "Block 3",
       },
       {
         "type": "input",
-        "messageKey": "blk4name",
+        "messageKey": "blkfourname",
         "defaultValue": "",
         "label": "Block 4",
       },
       {
         "type": "input",
-        "messageKey": "blk5name",
+        "messageKey": "blkfivename",
         "defaultValue": "",
         "label": "Block 5",
       },
       {
         "type": "input",
-        "messageKey": "blk6name",
+        "messageKey": "blksixname",
         "defaultValue": "",
         "label": "Block 6",
       },
       {
         "type": "input",
-        "messageKey": "blk7name",
+        "messageKey": "blksevenname",
         "defaultValue": "",
         "label": "Block 7",
       },
       {
         "type": "input",
-        "messageKey": "blk8name",
+        "messageKey": "blkeightname",
         "defaultValue": "",
         "label": "Block 8",
       }

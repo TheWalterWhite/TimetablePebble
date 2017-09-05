@@ -7,6 +7,8 @@
  typedef struct ClaySettings {
   GColor BackgroundColor;
   GColor ForegroundColor;
+  GColor BatteryColor;
+  GColor LowBatteryColor;
   char blk1name[8];
   char blk2name[8];
   char blk3name[8];

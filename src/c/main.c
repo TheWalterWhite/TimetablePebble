@@ -6,10 +6,12 @@ static TextLayer *s_time_layer;
 static TextLayer *s_time_left_layer;
 static TextLayer *s_until_layer;
 static TextLayer *s_class_layer;
+static Layer *s_battery_layer;
 struct tm nextclasstime;
 char currentDayName[10];
 char currentTime24h[1];
 static char a[8];
+static int s_battery_level;
 double timeleft;
 char nextclass[10];
 
@@ -444,6 +446,8 @@ static void prv_save_settings() {
 static void prv_default_settings() { //Try and keep block names 7 characters max or they don't fit on a pebble time
   settings.BackgroundColor = GColorWhite;
   settings.ForegroundColor = GColorBlack;
+  settings.BatteryColor = GColorBlack;
+  settings.LowBatteryColor = GColorRed;
   strncpy(settings.blk1name, "Math", 4);
   strncpy(settings.blk2name, "Band", 4);
   strncpy(settings.blk3name, "English", 7);
@@ -473,11 +477,37 @@ static void prv_load_settings() {
   
   // Read settings from persistent storage, if they exist
   persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
-  
+  printf("%s", settings.blk6name);
 
   printf("settings loaded");
 }
 
+
+static void battery_callback(BatteryChargeState state) {
+  // Record the new battery level
+  s_battery_level = state.charge_percent;
+  layer_mark_dirty(s_battery_layer); // Make sure layer gets redrawn every time
+}
+
+static void battery_update_proc(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+
+  // Find the width of the bar (total width = 114px)
+  int width = (s_battery_level * 114) / 100;
+  
+  // Draw the background
+ // graphics_context_set_fill_color(ctx, settings.BackgroundColor);
+  //graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+
+  // Draw the bar
+  if (s_battery_level > 20){
+    graphics_context_set_fill_color(ctx, settings.BatteryColor);
+  }
+  else {
+    graphics_context_set_fill_color(ctx, settings.LowBatteryColor);
+  }
+  graphics_fill_rect(ctx, GRect(0, 0, width, bounds.size.h), 0, GCornerNone);
+}
 
 
 // AppMessage receive handler
@@ -500,7 +530,8 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     strncpy(settings.blk5name, blk5_t->value->cstring + 0, 10);}
   Tuple *blk6_t = dict_find(iter, MESSAGE_KEY_blksixname);
   if(blk6_t) {
-    strncpy(settings.blk6name, blk6_t->value->cstring + 0, 10);}
+    strncpy(settings.blk6name, blk6_t->value->cstring + 0, 10);
+    printf("%s", settings.blk6name);}
   Tuple *blk7_t = dict_find(iter, MESSAGE_KEY_blksevenname);
   if(blk7_t) {
     strncpy(settings.blk7name, blk7_t->value->cstring + 0, 10);}
@@ -546,6 +577,7 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     settings.BackgroundColor = GColorFromHEX(bg_color_t->value->int32);
     window_set_background_color(s_main_window, settings.BackgroundColor);
   }
+  // Foreground Color
   Tuple *fg_color_t = dict_find(iter, MESSAGE_KEY_ForegroundColor);
   if (fg_color_t) {
     settings.ForegroundColor = GColorFromHEX(fg_color_t->value->int32);
@@ -554,6 +586,18 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     text_layer_set_text_color(s_class_layer, settings.ForegroundColor);
     text_layer_set_text_color(s_time_left_layer, settings.ForegroundColor); 
 }
+  // Battery Bar Color
+  Tuple *bat_color_t = dict_find(iter, MESSAGE_KEY_BatteryColor);
+  if (bat_color_t) {
+    settings.BatteryColor = GColorFromHEX(bat_color_t->value->int32);
+    battery_callback(battery_state_service_peek());
+  }
+  // Low Battery Bar Color
+  Tuple *batlow_color_t = dict_find(iter, MESSAGE_KEY_LowBatteryColor);
+  if (batlow_color_t) {
+    settings.LowBatteryColor = GColorFromHEX(batlow_color_t->value->int32);
+    battery_callback(battery_state_service_peek());
+  }
   prv_save_settings();
 }
   
@@ -584,6 +628,10 @@ static void main_window_load(Window *window) {
   // Create Bottom Layer
   s_time_left_layer = text_layer_create(
       GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
+  
+  // Create battery meter Layer
+  s_battery_layer = layer_create(GRect(14, 160, 115, 2));
+  layer_set_update_proc(s_battery_layer, battery_update_proc);
   
   //Layout for bottom time remaining
   text_layer_set_background_color(s_time_left_layer, GColorClear);
@@ -620,6 +668,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, text_layer_get_layer(s_time_left_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_until_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_class_layer));
+  layer_add_child(window_layer, s_battery_layer);
 }
 
 static void main_window_unload(Window *window) {
@@ -628,13 +677,14 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_time_left_layer);
   text_layer_destroy(s_class_layer);
   text_layer_destroy(s_until_layer);
+  layer_destroy(s_battery_layer);
 }
 
 static void init()  {
   prv_load_settings();
   // Open AppMessage connection
   app_message_register_inbox_received(prv_inbox_received_handler);
-  app_message_open(512, 512);
+  app_message_open(1024, 1024);
   
   // Create main Window element and assign to pointer
   s_main_window = window_create();
@@ -651,6 +701,9 @@ static void init()  {
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   
+  // Register for battery level updates
+  battery_state_service_subscribe(battery_callback);
+  battery_callback(battery_state_service_peek());
   // Make sure time is displayed from the start
   update_time();
 }

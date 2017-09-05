@@ -32,7 +32,9 @@
             "lunchactivitythu",
             "lunchactivityfri",
             "BackgroundColor",
-            "ForegroundColor"
+            "ForegroundColor",
+            "BatteryColor",
+            "LowBatteryColor"
         ],
         "projectType": "native",
         "resources": {
