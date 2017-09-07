@@ -5,12 +5,13 @@ static Window *s_main_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_time_left_layer;
 static TextLayer *s_until_layer;
+static TextLayer *s_date_layer;
 static TextLayer *s_class_layer;
 static Layer *s_battery_layer;
 struct tm nextclasstime;
 char currentDayName[10];
-char currentTime24h[1];
 static char a[8];
+static char date[10];
 static int s_battery_level;
 double timeleft;
 char nextclass[10];
@@ -25,7 +26,7 @@ static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsiz
   strncpy(nextclass, blknum, stringsize);
 }
 
-static void next_class(char* nextclass_return, char* currentTime24h, tm tick_time)  {
+static void next_class(char* nextclass_return, tm tick_time)  {
 
   // Sync day, month, year, etc to nextclasstime so we can manipulate just the hour and minute
   nextclasstime = tick_time; 
@@ -421,17 +422,22 @@ static void update_time()  {
   strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
            "%H:%M" : "%l:%M", tick_time);
   
-  // Get abbriviated day name and current time
+  // Get abbriviated day name, day number, month name
+  char currentMonthDay[2];
+  char currentMonthName[4];
   strftime(currentDayName, 4, "%a", tick_time);
-  strftime(currentTime24h, sizeof(currentTime24h), "%R", tick_time);
-  
+  strftime(currentMonthDay, 4, "%e", tick_time);
+  strftime(currentMonthName, 4, "%b", tick_time);
   
   // Calls next_class to get the next class(Who would have thought??)
-  next_class(nextclass, currentTime24h, *tick_time);
+  next_class(nextclass, *tick_time);
   
-
+  //Combine date elements
+  snprintf(date, 10, "%s%s %s", currentDayName, currentMonthDay, currentMonthName);
+  
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
+  text_layer_set_text(s_date_layer, date);
   text_layer_set_text(s_class_layer, nextclass);
   text_layer_set_text(s_time_left_layer, a);
 }
@@ -619,6 +625,10 @@ static void main_window_load(Window *window) {
   s_until_layer = text_layer_create(
       GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
   
+  // Create date layer
+  s_date_layer = text_layer_create(
+      GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
+  
   // Create middle layer 2
   s_class_layer = text_layer_create(
       GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
@@ -645,6 +655,15 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_until_layer, GTextAlignmentCenter);
   layer_set_frame(text_layer_get_layer(s_until_layer), GRect(0, 100, bounds.size.w, bounds.size.h));
   text_layer_set_text(s_until_layer, "Until");
+  
+  // Layout for date layer
+  text_layer_set_background_color(s_date_layer, GColorClear);
+  text_layer_set_text_color(s_date_layer, settings.ForegroundColor);
+  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
+  layer_set_frame(text_layer_get_layer(s_date_layer), GRect(0, 40, bounds.size.w, bounds.size.h));
+  text_layer_set_text(s_date_layer, "Date");
+
 
   // Layout for middle layer 2
   text_layer_set_background_color(s_class_layer, GColorClear);
@@ -667,6 +686,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, text_layer_get_layer(s_until_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_class_layer));
   layer_add_child(window_layer, s_battery_layer);
+  layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
 }
 
 static void main_window_unload(Window *window) {
@@ -675,6 +695,7 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_time_left_layer);
   text_layer_destroy(s_class_layer);
   text_layer_destroy(s_until_layer);
+  text_layer_destroy(s_date_layer);
   layer_destroy(s_battery_layer);
 }
 
