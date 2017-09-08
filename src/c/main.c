@@ -58,7 +58,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 1, next block is Advisory
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Advisory", 5);
+        set_info(nextclasstime, tick_time, "Advisory", 9);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 2
@@ -80,7 +80,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
         set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
       }
       else{
-        set_info(nextclasstime, tick_time, "Lunch", 5);
+        set_info(nextclasstime, tick_time, "Lunch", 6);
       }
           }
 
@@ -132,7 +132,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 6, next block is Focus
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Focus", 5);
+        set_info(nextclasstime, tick_time, "Focus", 6);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 7
@@ -154,7 +154,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
         set_info(nextclasstime, tick_time, settings.lunchactivitytue, sizeof(settings.lunchactivitytue));
       }
       else{
-        set_info(nextclasstime, tick_time, "Lunch", 5);
+        set_info(nextclasstime, tick_time, "Lunch", 6);
       }
           }
 
@@ -206,7 +206,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 3, next block is Focus
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Focus", 5);
+        set_info(nextclasstime, tick_time, "Focus", 6);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 4
@@ -228,7 +228,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
         set_info(nextclasstime, tick_time, settings.lunchactivitywed, sizeof(settings.lunchactivitywed));
       }
       else{
-        set_info(nextclasstime, tick_time, "Lunch", 5);
+        set_info(nextclasstime, tick_time, "Lunch", 6);
       }
           }
 
@@ -280,7 +280,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 8, next block is Focus
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Focus", 5);
+        set_info(nextclasstime, tick_time, "Focus", 6);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 6)){ //In Focus, next block is 1
@@ -302,7 +302,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
         set_info(nextclasstime, tick_time, settings.lunchactivitythu, sizeof(settings.lunchactivitythu));
       }
       else{
-        set_info(nextclasstime, tick_time, "Lunch", 5);
+        set_info(nextclasstime, tick_time, "Lunch", 6);
       }
           }
 
@@ -354,7 +354,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 9 || (tick_time.tm_hour == 9 && tick_time.tm_min < 21)){ //In block 5, next block is Focus
         nextclasstime.tm_hour = 9;
         nextclasstime.tm_min = 21;
-        set_info(nextclasstime, tick_time, "Focus", 5);
+        set_info(nextclasstime, tick_time, "Focus", 6);
         }          
     
     else if (tick_time.tm_hour < 10 || (tick_time.tm_hour == 10 && tick_time.tm_min < 22)){ //In Focus, next block is 6
@@ -370,7 +370,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
         set_info(nextclasstime, tick_time, settings.lunchactivityfri, sizeof(settings.lunchactivityfri));
       }
       else{
-        set_info(nextclasstime, tick_time, "Lunch", 5);
+        set_info(nextclasstime, tick_time, "Lunch", 6);
       }
           }
 
