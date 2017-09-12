@@ -76,7 +76,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-      if(strncmp(settings.lunchactivitymon, "", 1) != 0){
+      if(strncmp(settings.lunchactivitymon, "", 1) != 0 || strncmp(settings.lunchactivitymon, " ", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
       }
       else{
@@ -115,7 +115,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
       nextclasstime.tm_wday = 2;
       nextclasstime.tm_hour = 8;
       nextclasstime.tm_min = 25;
-      set_info(nextclasstime, tick_time, settings.blk7name, sizeof(settings.blk7name));
+      set_info(nextclasstime, tick_time, settings.blk6name, sizeof(settings.blk6name));
     }
       
     }
@@ -433,8 +433,12 @@ static void update_time()  {
   next_class(nextclass, *tick_time);
   
   //Combine date elements
+  if (tick_time->tm_mday > 9){ // Pad 2 digit numbers with a space as single digits are already padded
+  snprintf(date, 10, "%s %s %s", currentDayName, currentMonthDay, currentMonthName);
+  }
+  else{
   snprintf(date, 10, "%s%s %s", currentDayName, currentMonthDay, currentMonthName);
-  
+  }
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
   text_layer_set_text(s_date_layer, date);
