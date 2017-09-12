@@ -434,7 +434,7 @@ static void update_time()  {
   
   //Combine date elements
   if (tick_time->tm_mday > 9){ // Pad 2 digit numbers with a space as single digits are already padded
-  snprintf(date, 10, "%s %s %s", currentDayName, currentMonthDay, currentMonthName);
+  snprintf(date, 12, "%s %s %s", currentDayName, currentMonthDay, currentMonthName);
   }
   else{
   snprintf(date, 10, "%s%s %s", currentDayName, currentMonthDay, currentMonthName);
