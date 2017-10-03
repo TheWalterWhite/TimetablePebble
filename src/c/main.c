@@ -32,7 +32,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
   nextclasstime = tick_time; 
   
   // Make sure you're not some loser who uses this watchface on a weekend(and if you are set next block to 1)
-  if(strncmp(currentDayName, "Sat", 2) == 0 || (strncmp(currentDayName, "Sun", 2) == 0 && (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)))) {
+  if((strncmp(currentDayName, "Sat", 2) == 0) || (strncmp(currentDayName, "Sun", 2) == 0 && (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25))) || (strncmp(currentDayName, "Fri", 2) == 0 && (tick_time.tm_hour > 1 || (tick_time.tm_hour == 1 && tick_time.tm_min > 55)))) {
     strncpy(nextclass_return, settings.blk1name, sizeof(settings.blk1name));        // Saturdays are a bitch because %R won't display more than 24h so please don't use the watchface on a saturday
     strncpy(a, "", 1);
     text_layer_set_text(s_until_layer, "Monday");
@@ -49,7 +49,13 @@ static void next_class(char* nextclass_return, tm tick_time)  {
   //Monday
   if(strncmp(currentDayName, "Mon", 2) == 0){
     
-    if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){//Before Monday blk1
+    if (strncmp(settings.bforemon, "", 1) != 0 && ((tick_time.tm_hour < settings.beforeschooltimes[0][0]) || (tick_time.tm_hour == settings.beforeschooltimes[0][0] && tick_time.tm_min < settings.beforeschooltimes[0][1]))){//Before Monday blk1
+    nextclasstime.tm_hour = settings.beforeschooltimes[0][0];
+    nextclasstime.tm_min = settings.beforeschooltimes[0][1];
+    set_info(nextclasstime, tick_time, settings.bforemon, sizeof(settings.bforemon));
+    }  
+    
+    else if (tick_time.tm_hour < 8 || (tick_time.tm_hour == 8 && tick_time.tm_min < 25)){
         nextclasstime.tm_hour = 8;
         nextclasstime.tm_min = 25;
         set_info(nextclasstime, tick_time, settings.blk1name, sizeof(settings.blk1name));
@@ -76,7 +82,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-      if(strncmp(settings.lunchactivitymon, "", 1) != 0 || strncmp(settings.lunchactivitymon, " ", 1) != 0){
+      if(strncmp(settings.lunchactivitymon, "", 1) != 0){
         set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
       }
       else{
@@ -411,7 +417,6 @@ static void next_class(char* nextclass_return, tm tick_time)  {
 }
 }
 
-
 static void update_time()  {
   // Get a tm structure
   time_t temp = time(NULL);
@@ -468,6 +473,15 @@ static void prv_default_settings() { //Try and keep block names 7 characters max
   strncpy(settings.blk8name, "Spare", 5);
   settings.afterschoolendtimes[0][0] = 16; //4:30pm monday
   settings.afterschoolendtimes[0][1] = 30; 
+  settings.beforeschooltimes[1][0] = 7; //Tuesday 7:25
+  settings.beforeschooltimes[1][1] = 25;
+  settings.beforeschooltimes[2][0] = 7; //Wednesday 7:25
+  settings.beforeschooltimes[2][1] = 25;
+  strncpy(settings.bforemon, "", 1);
+  strncpy(settings.bforetue, "", 1);
+  strncpy(settings.bforewed, "", 1);
+  strncpy(settings.bforethu, "", 1);
+  strncpy(settings.bforefri, "", 1);
   strncpy(settings.afterschoolmon, "RnB", 3);
   strncpy(settings.afterschooltue, "", 1);
   strncpy(settings.afterschoolwed, "", 1);
@@ -579,6 +593,23 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   Tuple *aftfri_t = dict_find(iter, MESSAGE_KEY_afterschoolfri);
   if(aftfri_t) {
     strncpy(settings.afterschoolfri, aftfri_t->value->cstring + 0, 10);}
+  
+  // Before School Activities
+  Tuple *bformon_t = dict_find(iter, MESSAGE_KEY_bforemon);
+    if(bformon_t) {
+    strncpy(settings.bforemon, aftmon_t->value->cstring + 0, 10);}
+  Tuple *bfortue_t = dict_find(iter, MESSAGE_KEY_bforetue);
+  if(bfortue_t) {
+    strncpy(settings.bforetue, afttue_t->value->cstring + 0, 10);}
+  Tuple *bforwed_t = dict_find(iter, MESSAGE_KEY_bforewed);
+  if(bforwed_t) {
+    strncpy(settings.bforewed, aftwed_t->value->cstring + 0, 10);}
+  Tuple *bforthu_t = dict_find(iter, MESSAGE_KEY_bforethu);
+  if(bforthu_t) {
+    strncpy(settings.bforethu, aftthu_t->value->cstring + 0, 10);}
+  Tuple *bforfri_t = dict_find(iter, MESSAGE_KEY_bforefri);
+  if(bforfri_t) {
+    strncpy(settings.bforefri, aftfri_t->value->cstring + 0, 10);}
   // Background Color
   Tuple *bg_color_t = dict_find(iter, MESSAGE_KEY_BackgroundColor);
   if (bg_color_t) {

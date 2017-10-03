@@ -98,6 +98,45 @@ module.exports = [
     "items": [
       {
         "type": "heading",
+        "defaultValue": "Before School"
+      },
+      {
+        "type": "input",
+        "messageKey": "bforemon",
+        "defaultValue": "",
+        "label": "Monday Before School",
+      },
+      {
+        "type": "input",
+        "messageKey": "bforetue",
+        "defaultValue": "",
+        "label": "Teusday Before School",
+      },
+      {
+        "type": "input",
+        "messageKey": "bforewed",
+        "defaultValue": "",
+        "label": "Wednesday Before School",
+      },
+      {
+        "type": "input",
+        "messageKey": "bforethu",
+        "defaultValue": "",
+        "label": "Thursday Before School",
+      },
+      {
+        "type": "input",
+        "messageKey": "bforefri",
+        "defaultValue": "",
+        "label": "Friday Before School",
+        },
+     ]
+ },
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
         "defaultValue": "After School"
       },
       {

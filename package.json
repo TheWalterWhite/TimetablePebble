@@ -34,7 +34,12 @@
             "BackgroundColor",
             "ForegroundColor",
             "BatteryColor",
-            "LowBatteryColor"
+            "LowBatteryColor",
+            "bforemon",
+            "bforetue",
+            "bforewed",
+            "bforethu",
+            "bforefri"
         ],
         "projectType": "native",
         "resources": {
