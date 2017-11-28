@@ -21,7 +21,7 @@ static ClaySettings settings;
 static void set_info(tm nextclasstime, tm tick_time, char* blknum, int stringsize)  { //Stringsize has to be passed here because sizeof(blknum) returns either 0 or 4(idk) since it's a pointer
   timeleft = difftime(mktime(&nextclasstime), mktime(&tick_time));
   const time_t temp2 = timeleft; 
-  struct tm* test = gmtime(&temp2); //Yes the time manager is called test.
+  struct tm* test = gmtime(&temp2); //Yes the time manager is called test. Take gmtime since timezone has already been converted
   strftime(a, sizeof(a), "%k:%M", test);
   strncpy(nextclass, blknum, stringsize);
 }
@@ -82,7 +82,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
     else if (tick_time.tm_hour < 12 || (tick_time.tm_hour == 12 && tick_time.tm_min < 8)){ //In block 3, next block is Lunch
               nextclasstime.tm_hour = 12;
               nextclasstime.tm_min = 8;
-      if(strncmp(settings.lunchactivitymon, "", 1) != 0){
+      if(strncmp(settings.lunchactivitymon, "", 1) != 0 && (strncmp(settings.lunchactivitymon, " ", 1) != 0)){
         set_info(nextclasstime, tick_time, settings.lunchactivitymon, sizeof(settings.lunchactivitymon));
       }
       else{
@@ -112,7 +112,7 @@ static void next_class(char* nextclass_return, tm tick_time)  {
                   set_info(nextclasstime, tick_time, "Freedom", 7);
     }
     
-    else if (strncmp(settings.afterschoolmon, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[0][0]) || (tick_time.tm_hour == settings.afterschoolendtimes[0][0] && tick_time.tm_min < settings.afterschoolendtimes[0][1]))){ //In after school activity, next block is freedom
+    else if ((strncmp(settings.afterschoolmon, "", 1) != 0 && ((tick_time.tm_hour < settings.afterschoolendtimes[0][0]))) || (tick_time.tm_hour == settings.afterschoolendtimes[0][0] && tick_time.tm_min < settings.afterschoolendtimes[0][1])){ //In after school activity, next block is freedom
               nextclasstime.tm_hour = settings.afterschoolendtimes[0][0];
               nextclasstime.tm_min = settings.afterschoolendtimes[0][1];
               set_info(nextclasstime, tick_time, "Freedom", 7);
